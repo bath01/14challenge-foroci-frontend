@@ -7,9 +7,10 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
-  BORDER, CI_ORANGE, TEXT_DIM,
+  DARK_BG, BORDER, CI_ORANGE, TEXT_DIM,
   FONT_FAMILY,
 } from '../constants/theme';
 
@@ -31,6 +32,8 @@ const TAB_CONFIG = [
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
+  const insets = useSafeAreaInsets();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -39,6 +42,10 @@ export default function BottomTabNavigator() {
         tabBarActiveTintColor: CI_ORANGE,
         tabBarInactiveTintColor: TEXT_DIM,
         tabBarLabelStyle: styles.tabLabel,
+        sceneStyle: {
+          backgroundColor: DARK_BG,
+          paddingTop: insets.top,
+        },
       }}
     >
       {TAB_CONFIG.map(tab => (
