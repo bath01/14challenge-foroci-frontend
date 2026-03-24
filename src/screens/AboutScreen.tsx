@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Linking, TouchableOpacity } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import {
   DARK_BG, CARD, BORDER, SURFACE, CI_ORANGE, CI_GREEN,
   TEXT_PRIMARY, TEXT_SECONDARY, TEXT_DIM,
@@ -15,30 +16,42 @@ import FlagBar from '../components/ui/FlagBar';
 import { teamMembers } from '../data/mockData';
 
 // Stack technique du projet
-const TECH_STACK = ['React Native', 'Next.js (API)', 'Expo'];
+const TECH_STACK = [
+  { name: 'React Native', icon: 'phone-portrait-outline' as const, desc: 'Application mobile' },
+  { name: 'Expo', icon: 'rocket-outline' as const, desc: 'Build & déploiement' },
+  { name: 'Next.js API', icon: 'server-outline' as const, desc: 'Backend REST' },
+  { name: 'TypeScript', icon: 'code-slash-outline' as const, desc: 'Typage strict' },
+];
+
+// Couleurs des avatars par index
+const AVATAR_COLORS = [CI_ORANGE, CI_GREEN, '#6366F1'];
 
 export default function AboutScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Présentation du projet */}
-      <View style={styles.card}>
-        <FlagBar width={48} height={30} />
+      <View style={styles.heroCard}>
+        <FlagBar width={56} height={5} />
         <Text style={styles.appTitle}>ForoCI</Text>
+        <Text style={styles.tagline}>Ta force, c'est ta discipline</Text>
+        <View style={styles.divider} />
         <Text style={styles.description}>
-          Jour 9 du Challenge 14-14-14. ForoCI est un fitness tracker mobile. "Foro" signifie
-          force et courage en malinké. Suis tes entraînements, tes progressions et atteins tes objectifs.
+          Jour 9 du Challenge 14-14-14. ForoCI est un fitness tracker mobile.
+          "Foro" signifie force et courage en malinké.
         </Text>
         <Text style={styles.description}>
-          Design mobile-first avec interface sombre, navigation par onglets et visualisations
-          de progression aux couleurs de la Côte d'Ivoire.
+          Suis tes entraînements, tes progressions et atteins tes objectifs
+          avec une interface aux couleurs de la Côte d'Ivoire.
         </Text>
       </View>
 
       {/* Équipe */}
       <View style={styles.card}>
-        <Text style={styles.sectionLabel}>L'équipe</Text>
+        <View style={styles.sectionHeader}>
+          <Ionicons name="people-outline" size={16} color={CI_ORANGE} />
+          <Text style={styles.sectionLabel}>L'équipe</Text>
+        </View>
         {teamMembers.map((member, i) => {
-          // Génère les initiales à partir du nom
           const initials = member.name
             .split(' ')
             .map(w => w[0])
@@ -46,11 +59,11 @@ export default function AboutScreen() {
             .join('');
 
           return (
-            <View key={i} style={[styles.memberRow, i < teamMembers.length - 1 && { marginBottom: 10 }]}>
-              <View style={styles.avatar}>
+            <View key={i} style={[styles.memberRow, i < teamMembers.length - 1 && styles.memberBorder]}>
+              <View style={[styles.avatar, { backgroundColor: AVATAR_COLORS[i % AVATAR_COLORS.length] }]}>
                 <Text style={styles.avatarText}>{initials}</Text>
               </View>
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.memberName}>{member.name}</Text>
                 <Text style={styles.memberRole}>{member.role}</Text>
               </View>
@@ -61,22 +74,34 @@ export default function AboutScreen() {
 
       {/* Stack technique */}
       <View style={styles.card}>
-        <Text style={styles.sectionLabel}>Stack</Text>
-        {TECH_STACK.map((tech, i) => (
-          <View key={i} style={[styles.techItem, i < TECH_STACK.length - 1 && { marginBottom: 4 }]}>
-            <Text style={styles.techText}>{tech}</Text>
-          </View>
-        ))}
+        <View style={styles.sectionHeader}>
+          <Ionicons name="layers-outline" size={16} color={CI_GREEN} />
+          <Text style={styles.sectionLabel}>Stack technique</Text>
+        </View>
+        <View style={styles.techGrid}>
+          {TECH_STACK.map((tech, i) => (
+            <View key={i} style={styles.techItem}>
+              <Ionicons name={tech.icon} size={20} color={CI_GREEN} />
+              <Text style={styles.techName}>{tech.name}</Text>
+              <Text style={styles.techDesc}>{tech.desc}</Text>
+            </View>
+          ))}
+        </View>
       </View>
 
       {/* Open source */}
       <View style={styles.openSourceCard}>
+        <Ionicons name="heart-outline" size={20} color={CI_ORANGE} />
+        <Text style={styles.openSourceTitle}>Open Source</Text>
         <Text style={styles.openSourceText}>
-          Open Source sur <Text style={styles.orangeText}>225os.com</Text>
+          Disponible sur <Text style={styles.orangeText}>225os.com</Text>
           {' & '}
           <Text style={styles.greenText}>GitHub</Text>
         </Text>
       </View>
+
+      {/* Version */}
+      <Text style={styles.version}>ForoCI v1.0.0 — Challenge 14-14-14</Text>
     </ScrollView>
   );
 }
@@ -90,6 +115,43 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
     paddingBottom: 100,
   },
+  heroCard: {
+    backgroundColor: CARD,
+    borderRadius: BORDER_RADIUS.xl,
+    borderWidth: 1,
+    borderColor: BORDER,
+    padding: SPACING.xl,
+    marginBottom: SPACING.lg,
+    alignItems: 'center',
+  },
+  appTitle: {
+    fontSize: 28,
+    fontFamily: FONT_FAMILY_EXTRABOLD,
+    color: CI_ORANGE,
+    marginTop: 16,
+    letterSpacing: 2,
+  },
+  tagline: {
+    fontSize: FONT_SIZE.md,
+    color: TEXT_SECONDARY,
+    fontFamily: FONT_FAMILY,
+    marginTop: 4,
+    marginBottom: 16,
+  },
+  divider: {
+    width: 40,
+    height: 1,
+    backgroundColor: BORDER,
+    marginBottom: 16,
+  },
+  description: {
+    fontSize: FONT_SIZE.lg,
+    lineHeight: 22,
+    color: TEXT_SECONDARY,
+    fontFamily: FONT_FAMILY,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
   card: {
     backgroundColor: CARD,
     borderRadius: BORDER_RADIUS.xl,
@@ -98,45 +160,39 @@ const styles = StyleSheet.create({
     padding: SPACING.xl,
     marginBottom: SPACING.lg,
   },
-  appTitle: {
-    fontSize: FONT_SIZE.display,
-    fontFamily: FONT_FAMILY_EXTRABOLD,
-    color: CI_ORANGE,
-    marginTop: 16,
-    marginBottom: 12,
-  },
-  description: {
-    fontSize: FONT_SIZE.lg,
-    lineHeight: 23,
-    color: TEXT_SECONDARY,
-    fontFamily: FONT_FAMILY,
-    marginBottom: 12,
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
   },
   sectionLabel: {
     fontSize: FONT_SIZE.sm,
     color: TEXT_DIM,
-    fontFamily: FONT_FAMILY,
+    fontFamily: FONT_FAMILY_BOLD,
     textTransform: 'uppercase',
     letterSpacing: 1,
-    marginBottom: 12,
   },
   memberRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
+    paddingVertical: 10,
+  },
+  memberBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: BORDER,
   },
   avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    // Dégradé simulé via couleur intermédiaire (pas de LinearGradient nécessaire ici)
-    backgroundColor: CI_ORANGE,
   },
   avatarText: {
     color: '#FFF',
-    fontSize: FONT_SIZE.sm,
+    fontSize: FONT_SIZE.body,
     fontFamily: FONT_FAMILY_BOLD,
   },
   memberName: {
@@ -145,30 +201,50 @@ const styles = StyleSheet.create({
     color: TEXT_PRIMARY,
   },
   memberRole: {
-    fontSize: FONT_SIZE.xs,
+    fontSize: FONT_SIZE.sm,
     color: TEXT_SECONDARY,
     fontFamily: FONT_FAMILY,
   },
+  techGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
   techItem: {
-    paddingVertical: 7,
+    width: '47%',
+    paddingVertical: 12,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: BORDER_RADIUS.lg,
     backgroundColor: SURFACE,
     borderWidth: 1,
     borderColor: BORDER,
+    alignItems: 'center',
+    gap: 6,
   },
-  techText: {
+  techName: {
     fontSize: FONT_SIZE.body,
+    fontFamily: FONT_FAMILY_BOLD,
+    color: TEXT_PRIMARY,
+  },
+  techDesc: {
+    fontSize: FONT_SIZE.xs,
     fontFamily: FONT_FAMILY,
-    color: CI_GREEN,
+    color: TEXT_DIM,
   },
   openSourceCard: {
     alignItems: 'center',
-    padding: 14,
-    borderRadius: 12,
+    padding: 20,
+    borderRadius: BORDER_RADIUS.xl,
     backgroundColor: CARD,
     borderWidth: 1,
     borderColor: BORDER,
+    marginBottom: SPACING.lg,
+    gap: 8,
+  },
+  openSourceTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontFamily: FONT_FAMILY_BOLD,
+    color: TEXT_PRIMARY,
   },
   openSourceText: {
     fontSize: FONT_SIZE.body,
@@ -182,5 +258,12 @@ const styles = StyleSheet.create({
   greenText: {
     color: CI_GREEN,
     fontFamily: FONT_FAMILY_SEMIBOLD,
+  },
+  version: {
+    textAlign: 'center',
+    fontSize: FONT_SIZE.xs,
+    color: TEXT_DIM,
+    fontFamily: FONT_FAMILY,
+    opacity: 0.5,
   },
 });

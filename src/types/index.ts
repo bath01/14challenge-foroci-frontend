@@ -1,57 +1,116 @@
 /**
  * Types principaux de l'application ForoCI
- * Modèles de données pour le fitness tracker
+ * Modèles de données alignés sur l'API backend
  */
 
-// Catégories d'exercices disponibles
-export type ExerciseCategory = 'musculation' | 'cardio' | 'yoga' | 'stretching';
+// --- Authentification ---
+
+// Données d'inscription
+export interface RegisterDto {
+  email: string;
+  password: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+// Données de connexion
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
+// Réponse d'authentification (register/login)
+export interface AuthResponse {
+  token: string;
+  user: AuthUser;
+}
+
+// Utilisateur authentifié
+export interface AuthUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  height?: number | null;
+  weight?: number | null;
+  birthDate?: string | null;
+}
+
+// --- Exercices ---
+
+// Catégories d'exercices (enum backend)
+export type ExerciseCategory = 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS' | 'ABS' | 'CARDIO' | 'FULL_BODY';
+
+// Type d'exercice
+export type ExerciseType = 'REPS' | 'DURATION';
 
 // Exercice du catalogue
 export interface Exercise {
-  id: number;
+  id: string;
   name: string;
   category: ExerciseCategory;
-  muscleGroup: string;
-  icon: string;
+  type: ExerciseType;
   description: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// Série d'un exercice dans une séance
-export interface ExerciseSet {
-  reps: number;
-  weight: number;
-  duration?: number; // En secondes, pour les exercices chronométrés
-}
+// --- Séances (Workouts) ---
 
-// Exercice réalisé dans une séance (avec ses séries)
+// Exercice dans une séance (pivot workout ↔ exercise)
 export interface WorkoutExercise {
-  exerciseId: number;
-  sets: ExerciseSet[];
+  id: string;
+  workoutId: string;
+  exerciseId: string;
+  sets: number;
+  reps: number | null;
+  duration: number | null;
+  calories: number;
+  order: number;
+  exercise?: Exercise; // Inclus dans le détail
 }
 
-// Séance d'entraînement complète
+// Séance d'entraînement
 export interface Workout {
-  id: number;
-  date: string;
-  exercises: WorkoutExercise[];
-  totalDuration: number; // En minutes
-  caloriesBurned: number;
-  notes: string;
+  id: string;
+  name: string;
+  description: string;
+  order: number;
+  programId: string;
+  createdAt: string;
+  updatedAt: string;
+  exercises?: WorkoutExercise[]; // Inclus dans le détail
+  _count?: { exercises: number }; // Inclus dans la liste
 }
 
-// Programme d'entraînement hebdomadaire
+// --- Programmes ---
+
+// Niveau de difficulté
+export type Difficulty = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+
+// Programme d'entraînement
 export interface Program {
-  id: number;
+  id: string;
   name: string;
-  days: string[]; // Activité prévue pour chaque jour de la semaine
-  duration: number; // En semaines
+  description: string;
+  difficulty: Difficulty;
+  createdAt: string;
+  updatedAt: string;
+  workouts?: Workout[]; // Inclus dans le détail
+  _count?: { workouts: number }; // Inclus dans la liste
 }
+
+// --- Métriques ---
 
 // Entrée de suivi du poids corporel
 export interface WeightEntry {
-  date: string;
-  value: number; // En kg
+  id: string;
+  userId: string;
+  weight: number;
+  createdAt: string;
 }
+
+// --- UI ---
 
 // Données pour les graphiques en barres
 export interface ChartDataPoint {

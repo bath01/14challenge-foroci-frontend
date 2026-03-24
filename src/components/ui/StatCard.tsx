@@ -1,10 +1,11 @@
 /**
- * Carte de statistique compacte
- * Affiche une icône Ionicons, une valeur et un label (ex: séances, calories, streak)
+ * Carte de statistique compacte et cliquable
+ * Affiche une icône Ionicons, une valeur et un label
+ * Peut naviguer vers un onglet au tap
  */
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
   CARD, BORDER, TEXT_SECONDARY, CI_ORANGE,
@@ -17,16 +18,27 @@ interface StatCardProps {
   value: string | number;
   label: string;
   color?: string;
+  onPress?: () => void;
 }
 
-export default function StatCard({ iconName, value, label, color = CI_ORANGE }: StatCardProps) {
-  return (
-    <View style={styles.container}>
+export default function StatCard({ iconName, value, label, color = CI_ORANGE, onPress }: StatCardProps) {
+  const content = (
+    <>
       <Ionicons name={iconName} size={24} color={color} />
       <Text style={[styles.value, { color }]}>{value}</Text>
       <Text style={styles.label}>{label}</Text>
-    </View>
+    </>
   );
+
+  if (onPress) {
+    return (
+      <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
+        {content}
+      </TouchableOpacity>
+    );
+  }
+
+  return <View style={styles.container}>{content}</View>;
 }
 
 const styles = StyleSheet.create({

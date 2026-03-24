@@ -17,15 +17,13 @@ import {
 import HomeScreen from '../screens/HomeScreen';
 import WorkoutsScreen from '../screens/WorkoutsScreen';
 import ProgramsScreen from '../screens/ProgramsScreen';
-import TimerScreen from '../screens/TimerScreen';
 import AboutScreen from '../screens/AboutScreen';
 
-// Configuration des onglets avec icônes Ionicons
+// Configuration des onglets avec icônes Ionicons (Timer retiré, intégré dans la session)
 const TAB_CONFIG = [
   { name: 'Home', component: HomeScreen, icon: 'home', iconOutline: 'home-outline', label: 'Accueil' },
   { name: 'Workouts', component: WorkoutsScreen, icon: 'clipboard', iconOutline: 'clipboard-outline', label: 'Séances' },
   { name: 'Programs', component: ProgramsScreen, icon: 'calendar', iconOutline: 'calendar-outline', label: 'Programmes' },
-  { name: 'Timer', component: TimerScreen, icon: 'timer', iconOutline: 'timer-outline', label: 'Timer' },
   { name: 'About', component: AboutScreen, icon: 'information-circle', iconOutline: 'information-circle-outline', label: 'À propos' },
 ] as const;
 
